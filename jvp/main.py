@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Path
 from enum import Enum
 from typing import Optional, List
 from pydantic import BaseModel
@@ -124,3 +124,26 @@ async def hidden_query_route(hidden_query:str = Query(None, include_in_schema=Fa
         return {"hidden_query":hidden_query}
     return {"hidden_query": "not found"}
 
+# @app.get("/item_validation/{item_id}")
+# async def read_item_validation(
+#     item_id:int,
+#     q:str=Query(None, alias="item-query")
+# ):
+#     results = {"item_id": item_id}
+#     if q:
+#         results.update({"q":q})
+#     return results
+
+@app.get("/item_validation/{item_id}")
+async def read_item_validation(
+    *,
+    item_id:int = Path(..., title="title of path", ge=10, le=100),
+    q:str=Query("kjhdfkdshk"),
+    size:float=Query(gt=0, lt=7.75)
+):
+    results = {"item_id": item_id}
+    if q:
+        results.update({"q":q})
+    if size:
+        results.update({"size":size})
+    return results
